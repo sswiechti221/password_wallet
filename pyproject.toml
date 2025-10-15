@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "password_wallet"
+version = "0.0.1"
+
+requires-python = "==3.13.5"
+dependencies = [
+    "flask=3.1.2",
+    "sqlmodel=0.0.27"
+]
