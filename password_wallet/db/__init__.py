@@ -1,4 +1,5 @@
 import click
+from icecream import ic
 from sqlmodel import SQLModel, Session, create_engine
 from flask import Flask, current_app
 
@@ -6,7 +7,7 @@ from . import _models
 from ._models import User, Password, Encryption_Method
 
 engine = create_engine(f"sqlite:///{current_app.config["DATABASE_FILE"]}.db", echo=True)
-print(f"\u001b[31mZostało załadowane: {__name__}\u001b[39m]")
+ic(f"Zostało załadowane: {__name__}")
 
 def get_session():
     return Session(engine)

@@ -1,3 +1,4 @@
+from icecream import ic
 from typing import Literal
 from flask import Flask, render_template
 
@@ -5,28 +6,15 @@ def create_app() -> Flask:
     app = Flask(__name__)
 
     app.config.from_pyfile("config.py")
+    
+    if not app.config.get("DEBUG"):
+        ic.disable()
 
     with app.app_context():
         from . import db
-        db.init_app(app)
-    
-    @app.route("/hellow_word")
-    def hellow_word() -> Literal['Hellow Word']:
-        return "Hellow Word"
-
-    @app.route("/dodaji")
-    def test() -> Literal['Dodano']:
-        with db.get_session() as sestion:
-            user = db.User(
-                login="Adam",
-                password="1234"
-            )
-            sestion.add(user)
-            sestion.commit()
-            
+        db.init_app(app)  
         
-        return "Dodano"
-        
+        from . import encryptions      
 
     return app
 
