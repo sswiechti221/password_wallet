@@ -4,11 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
     <title>Password wallet</title>
 </head>
 <body>
-    <header></header>
-    <main>{% block main %}{% endblock main %}</main>
+    <header>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" id="logo">
+        <h1>
+            Password Wallet
+        </h1>
+        {% if g.user %}
+            <p>Witaj {{ g.user.login }} !!<p>
+            <a href="{{ url_for('auth.signout') }}">Wyloguj się</a>
+        {% endif %}
+    </header>
+    <main>
+        {% block main %}
+
+        {% endblock main %}
+    </main>
     <footer>
         <p>Stonę wykonał: Seweryn Świech 5ti2</p>
     </footer>

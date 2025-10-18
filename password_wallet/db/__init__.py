@@ -1,13 +1,14 @@
 import click
-from icecream import ic
-from sqlmodel import SQLModel, Session, create_engine
-from flask import Flask, current_app
+
+from sqlmodel import SQLModel, Session, create_engine, select
+from flask import Flask
 
 from . import _models
 from ._models import User, Password, Encryption_Method
+from password_wallet import ic
+from password_wallet.config import DATABASE_FILE, DEBUG
 
-engine = create_engine(f"sqlite:///{current_app.config["DATABASE_FILE"]}.db", echo=True)
-ic(f"Zostało załadowane: {__name__}")
+engine = create_engine(f"sqlite:///{DATABASE_FILE}.db", echo=DEBUG)
 
 def get_session():
     return Session(engine)
@@ -18,3 +19,5 @@ def create_db():
 
 def init_app(app: Flask):
     app.cli.add_command(create_db)
+
+ic(f"Załadowano moduł: {__name__}")

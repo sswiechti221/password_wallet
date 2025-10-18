@@ -21,14 +21,14 @@ class Password(SQLModel, table = True):
     user_id: int = Field(foreign_key="user.id")
     user: User = Relationship(back_populates="saved_passwords")
     
-    encryption_method_id: int = Field(foreign_key="encryption_method.id") 
-    encryption_method: "Encryption_Method" = Relationship(back_populates="passwords") 
+    encryption_method: "Encryption_Method" = Relationship(back_populates="password") 
     
     
 class Encryption_Method(SQLModel, table =  True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True, foreign_key="password.id")
     
     name: str
+    key: str
     
     # Relacja
-    passwords: list[Password] = Relationship(back_populates="encryption_method")
+    password: Password = Relationship(back_populates="encryption_method")
