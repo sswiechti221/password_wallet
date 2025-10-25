@@ -1,0 +1,8 @@
+section.active {
+    display: block;
+}
+
+section.disabled {
+    display: none;
+}
+

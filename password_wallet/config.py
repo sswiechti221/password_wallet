@@ -1,7 +1,9 @@
+# Debug options
 DEBUG = True
+DEBUG_DB = True
 
 # Database
-DATABASE_FILE = "password_wallet"
+DATABASE_FILE = "password_wallet.db"
 
 # Secutity
 SECRET_KEY = "dev"

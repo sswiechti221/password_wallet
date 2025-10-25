@@ -1,12 +1,74 @@
 {% extends 'base.html' %}
+{% block links %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_extra.css') }}">
+{% endblock %}
 {% block main %}
-    <section id="password_add">
+<main>
+    <section id="buttons-section">      
+        <button id="" onclick="section_change_to('stored-passwords-section', 'section-namespace-1');">Zapisane hasła</button>
+        <button id="" onclick="section_change_to('save-password-section', 'section-namespace-1');">Zapisz hasło</button>
+    </section>
+    <section id="stored-passwords-section" class="active section-namespace-1">
+        <h2>Zapisane Hasła</h2>
+        {% if stored_passwords %}
+        <table>
+            <tr>
+                <th>Hasło</th>
+                <th>Hasło zaszyfrowane</th>
+                <th>Metoda szyfrowania</th>
+                <th>Klucz</th>
+                <th>Opcje</th>
+            </tr>
+            {% for password, encrypted_password in stored_passwords %}
+                <tr>
+                    <td>{{ password }}</td>
+                    <td>{{ encrypted_password.password }}</td>
+                    <td>{{ encrypted_password.encryption_method_name }}</td>
+                    <td>{{ encrypted_password.encryption_method_key }}</td>
+                    <td>
+                        <form action="{{ url_for("home.dump_password") }}" method="post">
+                            <input name="encrypted_password_id" type="hidden" value="{{ encrypted_password.id }}">
+                            <button type="submit">Usuń</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>Brak zapisanych haseł</p>
+        {% endif %}
+    </section>
+    <section id="save-password-section" class="disabled section-namespace-1">
         <h2>Dodaj hasło</h2>
-        <form action="" method="post">
-
+        <form action="{{ url_for('home.store_password') }}" method="post">
+            <input type="text" name="password">
+            <select name="encryption_method">
+                {%+ for encryption_name in avaible_encryptions %}
+                    <option value="{{ encryption_name }}">{{ encryption_name }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="encryption_key">
+            <button type="submit">Zapisz</button>
         </form>
     </section>
-    <section id="password_stored">
-        <h2>Zapisane Hasła</h2>
-    </section>
+    {% with messages = get_flashed_messages(category_filter=['info']) %}
+        {% if messages%}
+            <section id="info-section">
+                {% for message in messages %}
+                    <p class="info-p">{{ message }}</p>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    {% with messages = get_flashed_messages(category_filter=['error']) %}
+        {% if messages%}
+            <section id="error-section">
+                {% for message in messages %}
+                    <p class="error-p">{{ message }}</p>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+</main>
 {% endblock %}
