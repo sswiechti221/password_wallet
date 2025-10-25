@@ -35,6 +35,7 @@ def create_db():
 
 def init_app(app: Flask):
     app.cli.add_command(create_db)
+    ic(f"Zainicjowano moduł: {__name__}")
     
 
 ic(f"Załadowano moduł: {__name__}")

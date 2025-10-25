@@ -30,6 +30,16 @@ def encrypt(method_name: method_name_t, password: password_t, key: key_t) -> enc
     ic(f"Zaszyfrowano hasło. Hasło: {password} --> {encrypted_password} Metoda: {method_name} Kluczem: {key}")
     return encrypted_password
 
+def _encryption_method_init_test(module: Encryption_Method) -> bool:
+    TEST_PASSOWRD: str = "123TEST123test"
+    
+    encrypted = module.encrypt(TEST_PASSOWRD, module.DEFAULT_KEY)
+    
+    if module.decrypt(encrypted, module.DEFAULT_KEY) == TEST_PASSOWRD:
+        return True
+    else:
+        return False
+
 def decrypt(method_name: method_name_t, encrypted_password: encrypted_password_t, key: key_t) -> password_t:
     password = get(method_name=method_name).decrypt(encrypted_password, key)
     ic(f"Odszyfrowano hasło. Hasło: {encrypted_password} --> {password} Metoda: {method_name} Kluczem: {key}")
@@ -42,10 +52,11 @@ def init_app(app: Flask):
             continue    
         module = importlib.import_module(f".{__sorce_file__}.{name}", __name__)
         
-        if isinstance(module, Encryption_Method):
+        if isinstance(module, Encryption_Method) and _encryption_method_init_test(module):
             __avaible_encryption_methods__[name] = module
-            
-        ic(f"Załadowano metode szyfrowania: {name}")    
+            ic(f"Załadowano metode szyfrowania: {name}") 
+        else:
+            ic(f"Nie udało się załadować metody szyfrowania: {name}") 
     ic(f"Zainicjowano moduł: {__name__}")        
 ic(f"Załadowano moduł: {__name__}")
 

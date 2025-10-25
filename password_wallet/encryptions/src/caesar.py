@@ -1,4 +1,5 @@
-"""
+DEFAULT_KEY = 5
+DESC = """
     Zmodyfikowana wersja syfru cezara.
     
     Zasada działanie jest taka sama z tą rużnicą że zamiast ogranicać się do danego alfabetu korzystamy z całej przestrzeni znaków

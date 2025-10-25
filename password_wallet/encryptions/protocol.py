@@ -2,7 +2,9 @@ from typing import Protocol, runtime_checkable
 
 @runtime_checkable
 class Encryption_Method(Protocol): 
-      
+    DEFAULT_KEY: str 
+    DESC: str
+    
     @staticmethod
     def encrypt(password: str, key: str) -> str:
         ...

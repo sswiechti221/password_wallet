@@ -27,6 +27,3 @@ def create_app() -> Flask:
 
     ic(f"Załadowano aplikację: {__name__}")
     return app
-
-if (__name__ == "__main__"):
-    create_app().run()
