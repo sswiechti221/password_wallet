@@ -1,12 +1,16 @@
 from __future__ import annotations
-import base64
+from base64 import b64encode, b64decode
 from enum import Enum
 from functools import partial
 from hashlib import sha256
 from secrets import randbits
 from typing import Any, Self
-NAME = "Salsa20"
 
+NAME = "Salsa20"
+DEFAULT_KEY = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
+DESC = """
+
+"""
 class Bitmap_size(Enum):
     BIT = 1
     BYTE = 8 * BIT
@@ -20,8 +24,8 @@ class Bitmap_size(Enum):
 
 class Bitmap():
     def __init__(self, value: int, size_byts: Bitmap_size | int) -> None:
-        self.size_byts: int = size_byts.value if isinstance(size_byts, Bitmap_size) else size_byts  # Size in bytes
-        self.size_bits: int = self.size_byts * Bitmap_size.BYTE.value # Size in bits
+        self.size_byts: int = size_byts.value if isinstance(size_byts, Bitmap_size) else size_byts
+        self.size_bits: int = self.size_byts * Bitmap_size.BYTE.value
         self.value: int = self._normalize(value)
         
     @classmethod
@@ -55,10 +59,10 @@ class Bitmap():
     
     @classmethod
     def from_base64(cls, bytes: bytes, size_byts) -> Bitmap:
-        return cls.from_bytes(base64.b64decode(bytes), size_byts=size_byts)
+        return cls.from_bytes(b64decode(bytes), size_byts=size_byts)
     
     def to_base64(self, trunk = False) -> bytes:
-        return base64.b64encode(self.to_bytes(trunk=trunk))
+        return b64encode(self.to_bytes(trunk=trunk))
          
     def trunk(self) -> Self:
         self.size_byts = self._min_size_byts()
@@ -233,16 +237,15 @@ def encrypt(password: str, key: str) -> tuple[str, dict[str, Any]]:
     key_bytes: bytes = sha256(key.encode()).digest()
     nonce: bytes = _get_nonce()
     
-    return (base64.b64encode(_salsa20(password_bytes, key_bytes, nonce)).decode(), {"nonce": base64.b64encode(nonce).decode()})
+    return (b64encode(_salsa20(password_bytes, key_bytes, nonce)).decode(), {"nonce": b64encode(nonce).decode()})
     
-def decrypt(password: str, key: str, data: dict[str, Any]) -> str:
-    password_bytes: bytes = base64.b64decode(password)
+def decrypt(encrypted_password: str, key: str, data: dict[str, Any]) -> str:
+    encrypted_password_bytes: bytes = b64decode(encrypted_password)
     key_bytes: bytes = sha256(key.encode()).digest()
-    nonce = base64.b64decode(data["nonce"])
+    nonce = b64decode(data["nonce"])
     
-    return _salsa20(password_bytes, key_bytes, nonce).decode()
+    return _salsa20(encrypted_password_bytes, key_bytes, nonce).decode()
     
 if __name__ == "__main__":
     breakpoint()
-    
     pass

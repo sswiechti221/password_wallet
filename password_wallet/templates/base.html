@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Dodatkowe linki -->
-    {% block links %}
-        
-    {% endblock %}
-    <!-- Podstawowe linki / Ładowane zawsze -->
+    {#- Dodatkowe linki -#}
+    {% block links -%}{% endblock -%}
+    {#- Podstawowe linki / Ładowane zawsze #}
     <link rel="stylesheet" href="{{ url_for('static', filename='style_base.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
     <script defer src="{{ url_for('static', filename='script.js') }}"></script>
@@ -19,18 +17,27 @@
         <h1>
             Password Wallet
         </h1>
-        {% if g.user %}
-            <div id="user">
-                <p>Witaj {{ g.user.login }} !!</p>
-                <a href="{{ url_for('auth.signout') }}">Wyloguj się</a>
-            </div>
-        {% endif %}
+        {% if g.user -%}
+        <div id="user">
+            <p>Witaj {{ g.user.login }} !!</p>
+            <a href="{{ url_for('auth.signout') }}">Wyloguj</a>
+        </div>
+        {%- endif %}
     </header>
     {% block main %}
     <main>
 
     </main>
     {% endblock main %}
+    {% with messages = get_flashed_messages(category_filter=['error']) -%}
+        {% if messages %}
+            <article id="error-article">
+                {% for message in messages %}
+                    <p class="error-p">{{ message }}</p>
+                {% endfor %}
+            </article>
+        {% endif %}
+    {%- endwith %}
     <footer>
         <p>Stonę wykonał: Seweryn Świech 5ti2</p>
     </footer>

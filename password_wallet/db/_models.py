@@ -1,9 +1,10 @@
-from sqlmodel import Field, Relationship, SQLModel
+from typing import Any
+from sqlmodel import Field, Relationship, SQLModel, JSON, Column
 
 class User(SQLModel, table = True):
     id: int | None = Field(default=None, primary_key=True)
     
-    login: str = Field(unique=True)
+    login: str = Field(unique=True, index=True)
     password: str = Field(min_length=64, max_length=64)
         
     # Relacje
@@ -16,6 +17,7 @@ class Encrypted_Password(SQLModel, table = True):
     
     encryption_method_name: str
     encryption_method_key: str
+    encryption_method_data: dict[str, Any] = Field(sa_column=Column(JSON))
     
     # Relacja
     user_id: int = Field(foreign_key="user.id")

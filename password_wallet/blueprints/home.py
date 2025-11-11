@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 from password_wallet import encryptions, ic
 from password_wallet import db
 from password_wallet.config import DEFAULT_REDIRECT_URL
-from password_wallet.db import get_session, select, User, Encrypted_Password
+from password_wallet.db import select, User, Encrypted_Password
 
 bp = Blueprint("home", __name__)
 
@@ -42,7 +42,7 @@ def __blank() -> str:
 def home():
     user = cast(User, g.user)
     avaible_encryptions = encryptions.avaible()
-    stored_passwords: list[tuple[str, Encrypted_Password]] = [(encryptions.decrypt(encrypted_password.encryption_method_name, encrypted_password.password, encrypted_password.encryption_method_key), encrypted_password) for encrypted_password in user.stored_passwords]
+    stored_passwords: list[tuple[str, Encrypted_Password]] = [(encryptions.decrypt(encrypted_password.encryption_method_name, encrypted_password.password, encrypted_password.encryption_method_key, encrypted_password.encryption_method_data), encrypted_password) for encrypted_password in user.stored_passwords]
     
     return render_template("home.html", avaible_encryptions=avaible_encryptions, stored_passwords=stored_passwords)
 
@@ -63,9 +63,9 @@ def store_password():
         flash("Błąd: brak identyfikatora użytkownika", "error")
         return info_redirect
 
-    encrypted_password = encryptions.encrypt(encryption_method_name, password, encryption_method_key)
+    encrypted_password, encrypted_password_data = encryptions.encrypt(encryption_method_name, password, encryption_method_key)
     
-    encrypted_password_db = Encrypted_Password(password=encrypted_password, encryption_method_name=encryption_method_name, encryption_method_key=encryption_method_key, user_id=user.id)
+    encrypted_password_db = Encrypted_Password(password=encrypted_password, encryption_method_name=encryption_method_name, encryption_method_key=encryption_method_key, encryption_method_data=encrypted_password_data, user_id=user.id)
 
     db_session = db.get_session()
     db_session.add(encrypted_password_db)
