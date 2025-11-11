@@ -6,10 +6,20 @@ build-backend = "setuptools.build_meta"
 name = "password_wallet"
 dynamic = ["version"]
 
-requires-python = "==3.13.5"
+requires-python = ">=3.12.4"
 
 dependencies = [
     "flask==3.1.2",
     "sqlmodel==0.0.27",
     "icecream==2.1.8"
 ]
+
+[tool.setuptools.packages.find]
+
+exclude = ["tests*", "instance*"]
+
+[tool.setuptools.package-data]
+exclude = ["tests*", "instance*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "password_wallet.config.__version__"}
