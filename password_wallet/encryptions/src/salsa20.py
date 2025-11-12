@@ -245,7 +245,3 @@ def decrypt(encrypted_password: str, key: str, data: dict[str, Any]) -> str:
     nonce = b64decode(data["nonce"])
     
     return _salsa20(encrypted_password_bytes, key_bytes, nonce).decode()
-    
-if __name__ == "__main__":
-    breakpoint()
-    pass
