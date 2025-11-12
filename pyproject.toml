@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "password_wallet"
-dynamic = ["version"]
+version = "0.1.0"
 
 requires-python = ">=3.12.4"
 
@@ -13,6 +13,11 @@ dependencies = [
     "sqlmodel==0.0.27",
     "icecream==2.1.8"
 ]
+authors = [
+    { name = "Seweryn Swiech", email = "sswiech.ti221@zsp1piotrkow.edu.pl"}
+]
+
+readme = {file = "README.md", content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "instance*"]
@@ -20,5 +25,3 @@ exclude = ["tests*", "instance*"]
 [tool.setuptools.package-data]
 exclude = ["tests*", "instance*"]
 
-[tool.setuptools.dynamic]
-version = {attr = "password_wallet.config.__version__"}
