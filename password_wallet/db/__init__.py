@@ -8,7 +8,7 @@ from ._models import User, Encrypted_Password
 from password_wallet import ic
 from password_wallet.config import DATABASE_FILE, DEBUG, DEBUG_DB
 
-engine = create_engine(f"sqlite:///{DATABASE_FILE}", echo=DEBUG and DEBUG_DB)
+engine = create_engine(DATABASE_FILE, echo=DEBUG and DEBUG_DB)
 
 def open_session():
     if hasattr(g, "db_session"):
@@ -36,6 +36,5 @@ def create_db():
 def init_app(app: Flask):
     app.cli.add_command(create_db)
     ic(f"Zainicjowano moduł: {__name__}")
-    
 
 ic(f"Załadowano moduł: {__name__}")

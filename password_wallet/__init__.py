@@ -1,15 +1,17 @@
+from typing import Any
 from icecream import ic
 from flask import Flask
 from password_wallet.config import DEBUG
 
-if not DEBUG:
-        ic.disable()
 
-ic(f"Uruchamianie aplikacji {__name__} w trybie {'DEBUG' if DEBUG else 'PRODUCTION'}")
 
 def create_app() -> Flask:
     app = Flask(__name__)
 
+    if not DEBUG:
+            ic.disable()
+    ic(f"Uruchamianie aplikacji {__name__} w trybie {'DEBUG' if DEBUG else 'PRODUCTION'}")
+    
     app.config.from_pyfile("config.py")
 
     with app.app_context():

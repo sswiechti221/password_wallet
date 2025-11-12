@@ -3,7 +3,7 @@ DEBUG = True
 DEBUG_DB = True
 
 # Database
-DATABASE_FILE = "password_wallet.db"
+DATABASE_FILE = "sqlite:///password_wallet.db"
 
 # Secutity
 SECRET_KEY = "dev"
