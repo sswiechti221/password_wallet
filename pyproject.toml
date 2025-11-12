@@ -15,7 +15,6 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-
 exclude = ["tests*", "instance*"]
 
 [tool.setuptools.package-data]
