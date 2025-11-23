@@ -1,4 +1,3 @@
-from typing import Any
 from icecream import ic
 from flask import Flask
 from password_wallet.config import DEBUG

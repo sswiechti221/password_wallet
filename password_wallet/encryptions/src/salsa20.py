@@ -98,7 +98,7 @@ class Bitmap():
     def __lshift__(self, by: int) -> Bitmap:
         return Bitmap(2**by * self.value % (2 ** self.size_bits -1), self.size_byts)
 
-word = partial(Bitmap, size_byts=Bitmap_size.WORD_BYTS)
+word: partial[Bitmap] = partial(Bitmap, size_byts=Bitmap_size.WORD_BYTS)
 
 def _litieendian(word: Bitmap) -> Bitmap:
     """
