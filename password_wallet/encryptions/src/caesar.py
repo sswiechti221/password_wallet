@@ -8,6 +8,7 @@ DESC = """
     
     Zasada działanie jest taka sama z tą rużnicą że zamiast ogranicać się do danego alfabetu. Operujemy na wartościach bajtów.
 """
+CIPHER_TYPE = "CLASSIC"
 
 def encrypt(password: str, key: str) -> tuple[str, dict[str, Any]]:
     password_bytes: bytes = password.encode(encoding="UTF-8")

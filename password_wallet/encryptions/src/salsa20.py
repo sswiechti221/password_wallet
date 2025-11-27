@@ -13,6 +13,8 @@ DEFAULT_KEY = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
 DESC = """
 
 """
+CIPHER_TYPE = "STREAM"
+
 class Data_Size(IntEnum):
     BIT = 1
     BYTE = 8 * BIT

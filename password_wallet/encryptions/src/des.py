@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Any
 from password_wallet.encryptions.utils import BitSet
 
 NAME = "Data Encryption Standard"
+DEFUALT_KEY = "Domyslny klucz"
 DESC = """"""
 CIPHER_TYPE = "BLOCK"
 
@@ -196,8 +196,8 @@ def _des(text: bytes, key: bytes, decrypt: bool = False):
     
     return block.to_bytes()
         
-
-
+    
+    
 if __name__ == "__main__":
     breakpoint()
     a = _des(b"siema", b"12345678")
