@@ -10,8 +10,8 @@ DESC = """
 """
 CIPHER_TYPE = "CLASSIC"
 
-def encrypt(password: str, key: str) -> tuple[str, dict[str, Any]]:
-    password_bytes: bytes = password.encode(encoding="UTF-8")
+def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
+    password_bytes: bytes = plain_text.encode(encoding="UTF-8")
     
     try:
         key_int = int(key , base=10)
@@ -21,8 +21,8 @@ def encrypt(password: str, key: str) -> tuple[str, dict[str, Any]]:
     
     return (b64encode(bytes(map(lambda element: (element + key_int) % 256, password_bytes))).decode(), {})
 
-def decrypt(encrypted_password: str, key: str, data: dict[str, Any]) -> str:
-    password_bytes: bytes = b64decode(encrypted_password.encode())
+def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
+    password_bytes: bytes = b64decode(encrypted_text)
     
     try:
         key_int = int(key, base=10)

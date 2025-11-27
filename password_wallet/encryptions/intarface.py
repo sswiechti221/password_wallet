@@ -14,9 +14,9 @@ class Encryption_Method(Protocol):
     CIPHER_TYPE: Literal["STREAM", "BLOCK", "CLASSIC"]
     
     @staticmethod
-    def encrypt(password: password_t, key: key_t) -> tuple[encrypted_password_t, json_data_t]:
+    def encrypt(plain_text: password_t, key: key_t) -> tuple[encrypted_password_t, json_data_t]:
         ...
     
     @staticmethod
-    def decrypt(encrypted_password: encrypted_password_t, key: key_t, data: json_data_t) -> str:
+    def decrypt(encrypted_text: encrypted_password_t, key: key_t, data: json_data_t) -> str:
         ...

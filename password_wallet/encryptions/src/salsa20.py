@@ -236,15 +236,15 @@ def _salsa20(password_bytes: bytes, key_bytes: bytes, nonce: bytes) -> bytes:
     
     return bytes(output)
     
-def encrypt(password: str, key: str) -> tuple[str, dict[str, Any]]:
-    password_bytes: bytes = password.encode()
+def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
+    password_bytes: bytes = plain_text.encode()
     key_bytes: bytes = sha256(key.encode()).digest()
     nonce: bytes = _get_nonce()
     
     return (b64encode(_salsa20(password_bytes, key_bytes, nonce)).decode(), {"nonce": b64encode(nonce).decode()})
     
-def decrypt(encrypted_password: str, key: str, data: dict[str, Any]) -> str:
-    encrypted_password_bytes: bytes = b64decode(encrypted_password)
+def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
+    encrypted_password_bytes: bytes = b64decode(encrypted_text)
     key_bytes: bytes = sha256(key.encode()).digest()
     nonce = b64decode(data["nonce"])
     

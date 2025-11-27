@@ -23,7 +23,7 @@ def get(method_name: method_name_t) -> Encryption_Method:
     return encryption_method
 
 def encrypt(method_name: method_name_t, password: password_t, key: key_t) -> tuple[encrypted_password_t, json_data_t]:
-    encrypted_password, json_data =  get(method_name=method_name).encrypt(password=password, key=key)
+    encrypted_password, json_data =  get(method_name=method_name).encrypt(plain_text=password, key=key)
     ic(f"Zaszyfrowano hasło. Hasło: {password} --> {encrypted_password} Metoda: {method_name} Kluczem: {key}")
     return (encrypted_password, json_data)
 
@@ -31,8 +31,8 @@ def _encryption_method_test(module: Encryption_Method) -> bool:
     TEST_PASSWORD: password_t = "TEST_PASSWORD_1234!@#$"
     TEST_KEY: key_t = module.DEFAULT_KEY
     
-    encrypted_password, data = module.encrypt(password=TEST_PASSWORD, key=TEST_KEY)
-    decrypted_password = module.decrypt(encrypted_password=encrypted_password, key=TEST_KEY, data=data)
+    encrypted_password, data = module.encrypt(plain_text=TEST_PASSWORD, key=TEST_KEY)
+    decrypted_password = module.decrypt(encrypted_text=encrypted_password, key=TEST_KEY, data=data)
     
     if decrypted_password != TEST_PASSWORD:
         return False
