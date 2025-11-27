@@ -1,17 +1,19 @@
 from __future__ import annotations
 from base64 import b64encode, b64decode
-from enum import Enum
+from enum import  IntEnum
 from functools import partial
 from hashlib import sha256
 from secrets import randbits
-from typing import Any, Self
+from typing import Any
+
+from password_wallet.encryptions.utils import BitSet
 
 NAME = "Salsa20"
 DEFAULT_KEY = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
 DESC = """
 
 """
-class Bitmap_size(Enum):
+class Data_Size(IntEnum):
     BIT = 1
     BYTE = 8 * BIT
     
@@ -22,95 +24,95 @@ class Bitmap_size(Enum):
     BLOCK_BYTS = BLOCK_WORDS * WORD_BYTS 
     BLOCK_BITS = BLOCK_BYTS * BYTE
 
-class Bitmap():
-    def __init__(self, value: int, size_byts: Bitmap_size | int) -> None:
-        self.size_byts: int = size_byts.value if isinstance(size_byts, Bitmap_size) else size_byts
-        self.size_bits: int = self.size_byts * Bitmap_size.BYTE.value
-        self.value: int = self._normalize(value)
+# class Bitmap():
+#     def __init__(self, value: int, size_byts: Bitmap_size | int) -> None:
+#         self.size_byts: int = size_byts.value if isinstance(size_byts, Bitmap_size) else size_byts
+#         self.size_bits: int = self.size_byts * Bitmap_size.BYTE.value
+#         self.value: int = self._normalize(value)
         
-    @classmethod
-    def from_bytes(cls, bytes: bytes | bytearray, size_byts: Bitmap_size | int) -> Bitmap:
-        if isinstance(size_byts, Bitmap_size):
-            size_byts = size_byts.value
+#     @classmethod
+#     def from_bytes(cls, bytes: bytes | bytearray, size_byts: Bitmap_size | int) -> Bitmap:
+#         if isinstance(size_byts, Bitmap_size):
+#             size_byts = size_byts.value
     
-        if len(bytes) > size_byts:
-            raise ValueError(f"Nie można utworzyć Bitmapy z podanych bajtów. Długość podanych bajtów ({len(bytes)}) jest większa niż zadeklarowany rozmiar Bitmapy ({size_byts}).")
+#         if len(bytes) > size_byts:
+#             raise ValueError(f"Nie można utworzyć Bitmapy z podanych bajtów. Długość podanych bajtów ({len(bytes)}) jest większa niż zadeklarowany rozmiar Bitmapy ({size_byts}).")
         
-        return cls(int.from_bytes(bytes), size_byts)
+#         return cls(int.from_bytes(bytes), size_byts)
     
-    def to_bytes(self, trunk = False) -> bytes:
-        """ Zwraca wartość Bitmapy w postaci bajtów
+#     def to_bytes(self, trunk = False) -> bytes:
+#         """ Zwraca wartość Bitmapy w postaci bajtów
 
-        Args:
-            trunk (bool, optional): Jeżeli False obiekt bytes bedzie miał tą samą długość co Bitmap.
-                                    Jeżeli True to obiekt bytes będzie miał minimalną długość potrzebną do przechowania wartości Bitmapy.
-                                    Domyślnie True.
+#         Args:
+#             trunk (bool, optional): Jeżeli False obiekt bytes bedzie miał tą samą długość co Bitmap.
+#                                     Jeżeli True to obiekt bytes będzie miał minimalną długość potrzebną do przechowania wartości Bitmapy.
+#                                     Domyślnie True.
 
-        Returns:
-            bytes: Reprezentacja bajtowa Bitmapy
-        """
-        lenght: int
-        if trunk:
-            lenght = self._min_size_byts()
-        else:
-            lenght = self.size_byts
+#         Returns:
+#             bytes: Reprezentacja bajtowa Bitmapy
+#         """
+#         lenght: int
+#         if trunk:
+#             lenght = self._min_size_byts()
+#         else:
+#             lenght = self.size_byts
         
-        return self.value.to_bytes(length=lenght)        
+#         return self.value.to_bytes(length=lenght)        
     
-    @classmethod
-    def from_base64(cls, bytes: bytes, size_byts) -> Bitmap:
-        return cls.from_bytes(b64decode(bytes), size_byts=size_byts)
+#     @classmethod
+#     def from_base64(cls, bytes: bytes, size_byts) -> Bitmap:
+#         return cls.from_bytes(b64decode(bytes), size_byts=size_byts)
     
-    def to_base64(self, trunk = False) -> bytes:
-        return b64encode(self.to_bytes(trunk=trunk))
+#     def to_base64(self, trunk = False) -> bytes:
+#         return b64encode(self.to_bytes(trunk=trunk))
          
-    def trunk(self) -> Self:
-        self.size_byts = self._min_size_byts()
-        self.size_bits = self.size_byts * Bitmap_size.BYTE.value
+#     def trunk(self) -> Self:
+#         self.size_byts = self._min_size_byts()
+#         self.size_bits = self.size_byts * Bitmap_size.BYTE.value
         
-        return self
-    def _min_size_byts(self) -> int:
-        bit_lenght = self.value.bit_length()
-        if bit_lenght % Bitmap_size.BYTE.value == 0:
-            lenght = bit_lenght // Bitmap_size.BYTE.value
-        else:
-            lenght = (self.value.bit_length() // Bitmap_size.BYTE.value) + 1
-        return lenght
+#         return self
+#     def _min_size_byts(self) -> int:
+#         bit_lenght = self.value.bit_length()
+#         if bit_lenght % Bitmap_size.BYTE.value == 0:
+#             lenght = bit_lenght // Bitmap_size.BYTE.value
+#         else:
+#             lenght = (self.value.bit_length() // Bitmap_size.BYTE.value) + 1
+#         return lenght
     
-    def _normalize(self, value: int) -> int:
-        return value % (2 ** self.size_bits)
+#     def _normalize(self, value: int) -> int:
+#         return value % (2 ** self.size_bits)
     
-    def __repr__(self) -> str:
-        return f"<{__class__.__name__} size=[{self.size_bits} bits, {self.size_byts} byts] base64={self.to_base64(trunk=True)} bytes={self.to_bytes(trunk=True)} int={self.value}>"
+#     def __repr__(self) -> str:
+#         return f"<{__class__.__name__} size=[{self.size_bits} bits, {self.size_byts} byts] base64={self.to_base64(trunk=True)} bytes={self.to_bytes(trunk=True)} int={self.value}>"
         
-    def __add__(self, other: Bitmap) -> Bitmap:
-        if self.size_byts != other.size_byts:
-            raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
+#     def __add__(self, other: Bitmap) -> Bitmap:
+#         if self.size_byts != other.size_byts:
+#             raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
         
-        return Bitmap(self.value + other.value, self.size_byts)
+#         return Bitmap(self.value + other.value, self.size_byts)
     
-    def __xor__(self, other: Bitmap) -> Bitmap:
-        if self.size_byts != other.size_byts:
-            raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
+#     def __xor__(self, other: Bitmap) -> Bitmap:
+#         if self.size_byts != other.size_byts:
+#             raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
         
-        return Bitmap(self.value ^ other.value, self.size_byts)
+#         return Bitmap(self.value ^ other.value, self.size_byts)
 
-    def __lshift__(self, by: int) -> Bitmap:
-        return Bitmap(2**by * self.value % (2 ** self.size_bits -1), self.size_byts)
+#     def __lshift__(self, by: int) -> Bitmap:
+#         return Bitmap(2**by * self.value % (2 ** self.size_bits -1), self.size_byts)
 
-word: partial[Bitmap] = partial(Bitmap, size_byts=Bitmap_size.WORD_BYTS)
+word: partial[BitSet] = partial(BitSet, size=Data_Size.WORD_BITS.value)
 
-def _litieendian(word: Bitmap) -> Bitmap:
+def _litieendian(word: BitSet) -> BitSet:
     """
         (b1, b2, b3, b4) = (b4, b3, b2, b1) 
     """
-    value: bytes = word.value.to_bytes(4)
+    value: bytes = word.bytes
     new_value = bytes([value[3], value[2], value[1], value[0]])
     
     word.value = int.from_bytes(new_value)
     
     return word
-def _quarterround(word_a: Bitmap, word_b: Bitmap, word_c: Bitmap, word_d: Bitmap) -> tuple[Bitmap, Bitmap, Bitmap, Bitmap]:
+def _quarterround(word_0: BitSet, word_1: BitSet, word_2: BitSet, word_3: BitSet) -> tuple[BitSet, BitSet, BitSet, BitSet]:
     """
     y1 = x1 XOR ((x0 + x3) <<< 7)
     y2 = x2 XOR ((y1 + x0) <<< 9)
@@ -118,13 +120,13 @@ def _quarterround(word_a: Bitmap, word_b: Bitmap, word_c: Bitmap, word_d: Bitmap
     y0 = x0 XOR ((y3 + y2) <<< 18)
     """
     
-    word_b = word_b ^ ((word_a + word_d) << 7)
-    word_c = word_c ^ ((word_b + word_a) << 9)
-    word_d = word_d ^ ((word_c + word_b) << 13)
-    word_a = word_a ^ ((word_d + word_c) << 18)
+    word_1 = word_1 ^ ((word_0 + word_3).rotate(7))
+    word_2 = word_2 ^ ((word_1 + word_0).rotate(9))
+    word_3 = word_3 ^ ((word_2 + word_1).rotate(13))
+    word_0 = word_0 ^ ((word_3 + word_2).rotate(18))
     
-    return (word_a, word_b, word_c, word_d)
-def  _rowround(words: list[Bitmap]) ->list[Bitmap]:
+    return (word_0, word_1, word_2, word_3)
+def  _rowround(words: list[BitSet]) ->list[BitSet]:
     """
     (y0, y1, y2, y3) = quarterround(x0, x1, x2, x3)
     (y5, y6, y7, y4) = quarterround(x5, x6, x7, x4)
@@ -140,7 +142,7 @@ def  _rowround(words: list[Bitmap]) ->list[Bitmap]:
     words[15], words[12], words[13], words[14] = _quarterround(words[15], words[12], words[13], words[14])
     
     return words
-def _collumnround(words: list[Bitmap]) -> list[Bitmap]:
+def _collumnround(words: list[BitSet]) -> list[BitSet]:
     """
     (y0, y4, y8, y12) = quarterround(x0, x4, x8, x12)
     (y5, y9, y13, y1) = quarterround(x5, x9, x13, x1)
@@ -157,13 +159,13 @@ def _collumnround(words: list[Bitmap]) -> list[Bitmap]:
     words[15], words[3], words[7], words[11] = _quarterround(words[15], words[3], words[7], words[11])    
 
     return words
-def _dubleround(words: list[Bitmap]):
+def _dubleround(words: list[BitSet]):
     if len(words) != 16:
         raise ValueError(f"Ocekiwano 16 słów (words), otrzymano {len(words)}")
     
     return _rowround(_collumnround(words))
 def _hash(block: bytes):
-    words: list[Bitmap] = [_litieendian(word(int.from_bytes(block[index:index + 4]))) for index in range(0, 64, 4)]
+    words: list[BitSet] = [_litieendian(word(int.from_bytes(block[index:index + 4]))) for index in range(0, 64, 4)]
     
     for _ in range(10):
         words = _dubleround(words)
@@ -217,12 +219,12 @@ def _get_nonce(size_bytes: int = 8) -> bytes:
     Returns:
         bytes: nonce
     """
-    return randbits(size_bytes * Bitmap_size.BYTE.value).to_bytes(size_bytes)
+    return randbits(size_bytes * Data_Size.BYTE.value).to_bytes(size_bytes)
 def _salsa20(password_bytes: bytes, key_bytes: bytes, nonce: bytes) -> bytes:
     password_bytes_len: int = len(password_bytes)
     output: bytearray = bytearray()
     
-    for block_number, block_index_start in enumerate(range(0, password_bytes_len, Bitmap_size.BLOCK_BYTS.value)):
+    for block_number, block_index_start in enumerate(range(0, password_bytes_len, Data_Size.BLOCK_BYTS.value)):
         block_index_end = min(block_index_start + 64, password_bytes_len)
         
         expanded_key: bytes = _expand_key(key_bytes, nonce, block_number.to_bytes(8))
