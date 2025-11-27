@@ -168,7 +168,7 @@ def _F_function(right_part: BitSet, block_key: BitSet) -> BitSet:
     for s_box, data in enumerate(right_part.split(6)):
             out = out << 4 | _S_BOX(s_box, data)
     
-    if out.size_bits != 32:
+    if out.size != 32:
         raise RuntimeError()
     
     return _P(out) 
