@@ -44,7 +44,7 @@ class BitSet:
         return size
     
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: value: {self.value} size: {self.size_bits} bits bit_order: {self.bit_order}>"
+        return f"<{self.__class__.__name__}: value: {self.value} size: {self.size_bits} bits bit_order: {self.bit_order} bytes: {self.to_bytes()}>"
     def __add__(self, other: BitSet) -> BitSet:
         """ Dodaje do siebie Obiekty typu BitSet o tych samych rozmiarach
 
@@ -85,7 +85,8 @@ class BitSet:
         raise ValueError(f"Nie można dodać {self} do {other} ponieważ {self.size_bits==other.size_bits=}")
     
     @classmethod
-    def from_bytes(cls, bytes: bytes | bytearray, size: int) -> BitSet:
+    def from_bytes(cls, bytes: bytes | bytearray, size: int | None= None) -> BitSet:
+        size = size if size else len(bytes) * 8
         return cls(int.from_bytes(bytes), size)
     def to_bytes(self) -> bytes:
         """
@@ -157,22 +158,35 @@ class BitSet:
             tuple[BitSet, ...] | BitSet: _description_
         """
         out: list[BitSet] = []
+        missing: int = 0
+        need_shrink: bool = False
+        
+        if not self.size_bits % size == 0:
+            missing = size - (self.size_bits % size)
+            self.growth(missing)
+            need_shrink = True    
+        
         if size == self.size_bits:
             out.append(self)
         
-        elif self.size_bits % size == 0:
+        else:
             for count in range(self.size_bits // size):
                 index_start =  count * size
                 index_end = index_start + size
                 out.append(self.get_bits(slice(index_start, index_end, 1), size))
-        
-        else:
-            raise NotImplementedError("")
+       
+            if need_shrink:
+                self.shrink(missing)            
         
         return out
     def clear(self):
         self.__value = 0
         self.__clered__ = True    
+    def growth(self, by: int) -> None:
+        self.__size_bits__ += by
+    def shrink(self, by: int) -> None:
+        self.__size_bits__ -= by
+        self.value = self.value #TODO Normalizuje -> Zmienić na coś lepszego
     def resize(self, new_size: int):
         self.__size_bits__ = new_size
         self.value = self._normalize_(self.value, new_size)

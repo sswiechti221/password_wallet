@@ -17,7 +17,7 @@ def test_bitset_get_bits(bitset: utils.BitSet, locations: Sequence, expected):
 @pytest.mark.parametrize("value, size, split_size, expected", [
     (0b1000, 4, 1, [1,0,0,0]),
     (0b1111, 4, 2, [3,3]),
-    pytest.param(0b1010, 4, 3, Exception, marks=pytest.mark.xfail),
+    pytest.param(0b1010, 4, 3, [1, 2], marks=pytest.mark.xfail),
     (0b1111, 4, 4, [0b1111])
 ])
 def test_bitset_split(value: int, size: int, split_size: int ,expected):

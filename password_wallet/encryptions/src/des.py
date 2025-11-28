@@ -1,8 +1,10 @@
-from __future__ import annotations
-from password_wallet.encryptions.utils import BitSet
+from base64 import b64decode, b64encode
+from password_wallet.encryptions.utils import BitSet, hash_key
+from typing import Any
 
 NAME = "Data Encryption Standard"
-DEFUALT_KEY = "Domyslny klucz"
+KEY_DEFAULT = "Domyslny klucz"
+KEY_SIZE_BITS = 8
 DESC = """"""
 CIPHER_TYPE = "BLOCK"
 
@@ -173,37 +175,49 @@ def _F_function(right_part: BitSet, block_key: BitSet) -> BitSet:
     
     return _P(out) 
 
-def _des(text: bytes, key: bytes, decrypt: bool = False):
-    block = BitSet(int.from_bytes(text), BLOCK_SIZE)
-    
-    block = _IP(block)
-    
-    left_part = block.get_bits(slice(1,32, 1), 32)
-    right_part = block.get_bits(slice(33, -1, 1), 32)
-    
+def _des(text: bytes, key: bytes, decrypt: bool = False) -> bytes:
     keys = list(_key_generator(key, rounds = 16))
+    out: bytearray = bytearray()
+    
     if decrypt:
         keys.reverse()
+    
+    for block in BitSet.from_bytes(text).split(BLOCK_SIZE):
+        block = _IP(block)
+        
+        left_part = block.get_bits(slice(1,32, 1), 32)
+        right_part = block.get_bits(slice(33, -1, 1), 32)
+        
+                
+        for block_key in keys:        
+            left_part ^= _F_function(right_part, block_key)
+            left_part, right_part = right_part, left_part
             
-    for block_key in keys:        
+        left_part, right_part = right_part, left_part # Cofnięcie ostatniej zamiany
+            
+        block = left_part.expand(right_part, "Right")
+        block = _EP(block)
         
-        left_part ^= _F_function(right_part, block_key)
-        
-        left_part, right_part = right_part, left_part
-        
-    block = left_part.expand(right_part, "Right")
-    block = _EP(block)
+        out += block.to_bytes()
     
-    return block.to_bytes()
+    return out
         
+def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
+    plain_text_bytes = plain_text.encode()
+    key_hash = hash_key(key, KEY_SIZE_BITS)    
+
+    return (b64encode(_des(plain_text_bytes, key_hash)).decode(), {})
+def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
+    encrypted_text_bytes = b64decode(encrypted_text)
+    key_hash = hash_key(key, KEY_SIZE_BITS)   
     
-    
+    return _des(encrypted_text_bytes, key_hash, True).decode().strip("\x00")
+        
 if __name__ == "__main__":
     breakpoint()
-    a = _des(b"siema", b"12345678")
-    print(a)
-
-    b = _des(a, b"12345678", True)
-    print(b)
+    
+    a, b = encrypt("siema", "1234")
+    c = decrypt(a, "1234", b)
+   
     
     pass
