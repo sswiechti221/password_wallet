@@ -1,5 +1,6 @@
 from __future__ import annotations
 from base64 import b64decode, b64encode
+from hashlib import blake2b
 from typing import Literal, Sequence
 
 type BitOrder = Literal["Big", "Little"]
@@ -227,3 +228,6 @@ class BitSet:
             out = (self.value >> by) | (self.value << (self.size_bits - by)) & ((2 ** self.size_bits) - 1)
             
         return BitSet(out, self.size_bits, self.bit_order)
+    
+def hash_key(key: str, size: int) -> bytes:
+    return blake2b(key.encode(), digest_size=size).digest()

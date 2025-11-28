@@ -2,14 +2,14 @@ from __future__ import annotations
 from base64 import b64encode, b64decode
 from enum import  IntEnum
 from functools import partial
-from hashlib import sha256
 from secrets import randbits
 from typing import Any
 
-from password_wallet.encryptions.utils import BitSet
+from password_wallet.encryptions.utils import BitSet, hash_key
 
 NAME = "Salsa20"
-DEFAULT_KEY = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
+KEY_DEFAULT = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
+KEY_SIZE_BITS = 32
 DESC = """
 
 """
@@ -238,14 +238,15 @@ def _salsa20(password_bytes: bytes, key_bytes: bytes, nonce: bytes) -> bytes:
     
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
     password_bytes: bytes = plain_text.encode()
-    key_bytes: bytes = sha256(key.encode()).digest()
+    key_hash: bytes = hash_key(key, KEY_SIZE_BITS)
+    
     nonce: bytes = _get_nonce()
     
-    return (b64encode(_salsa20(password_bytes, key_bytes, nonce)).decode(), {"nonce": b64encode(nonce).decode()})
-    
+    return (b64encode(_salsa20(password_bytes, key_hash, nonce)).decode(), {"nonce": b64encode(nonce).decode()})   
 def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
     encrypted_password_bytes: bytes = b64decode(encrypted_text)
-    key_bytes: bytes = sha256(key.encode()).digest()
+    key_hash: bytes = hash_key(key, KEY_SIZE_BITS)
+
     nonce = b64decode(data["nonce"])
     
-    return _salsa20(encrypted_password_bytes, key_bytes, nonce).decode()
+    return _salsa20(encrypted_password_bytes, key_hash, nonce).decode()

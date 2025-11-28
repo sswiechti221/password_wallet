@@ -29,11 +29,14 @@ def encrypt(method_name: method_name_t, password: password_t, key: key_t) -> tup
 
 def _encryption_method_test(module: Encryption_Method) -> bool:
     TEST_PASSWORD: password_t = "TEST_PASSWORD_1234!@#$"
-    TEST_KEY: key_t = module.DEFAULT_KEY
+    TEST_KEY: key_t = module.KEY_DEFAULT
     
-    encrypted_password, data = module.encrypt(plain_text=TEST_PASSWORD, key=TEST_KEY)
-    decrypted_password = module.decrypt(encrypted_text=encrypted_password, key=TEST_KEY, data=data)
-    
+    try:
+        encrypted_password, data = module.encrypt(plain_text=TEST_PASSWORD, key=TEST_KEY)
+        decrypted_password = module.decrypt(encrypted_text=encrypted_password, key=TEST_KEY, data=data)
+    except TypeError as e:
+        raise TypeError("Funkcja szyfrująca nie zwraca odpowiedznie ilośći argumenów") from e
+            
     if decrypted_password != TEST_PASSWORD:
         return False
 
@@ -50,10 +53,19 @@ def init_app(app: Flask):
         if module_name.startswith("__") and module_name.endswith("__"):
             continue    
     
-        module = importlib.import_module(f".{__sorce_file__}.{module_name}", __name__)
-                    
+        try:
+            module = importlib.import_module(f".{__sorce_file__}.{module_name}", __name__)
+        except Exception as e:
+            ic(f"Nie udało się załadować metody szyfrowania. Błąd: {e}")    
+            continue
+            
         if not isinstance(module, Encryption_Method):
             ic(f"Moduł {module_name} nie implementuje interfejsu Encryption_Method. Pomijanie modułu.")
+            for fild_name in Encryption_Method.__annotations__.keys():
+                if hasattr(module, fild_name):
+                    continue
+                
+                ic(f"Modułowi {module_name} brakuje pola o nazwie: {fild_name}")
             continue
         
         if module_name in __avaible_encryption_methods__:

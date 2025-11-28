@@ -2,7 +2,8 @@ from typing import Any
 from base64 import b64encode, b64decode
 
 NAME = "Caesar"
-DEFAULT_KEY = "5"
+KEY_DEFAULT = "5"
+KEY_SIZE_BITS = 8
 DESC = """
     Zmodyfikowana wersja syfru cezara.
     

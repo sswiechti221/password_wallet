@@ -1,9 +1,11 @@
 from base64 import b64decode, b64encode
 from typing import Any
 
+from password_wallet.encryptions.utils import hash_key
 
 NAME = "RC4"
-DEFAULT_KEY = "DEFUALT"
+KEY_DEFAULT = "DEFUALT"
+KEY_SIZE_BITS = 32
 DESC = """
 
 """
@@ -26,7 +28,6 @@ def _stream_key(key: bytes):
         
         S[i], S[j] = S[j], S[i]
         yield S[(S[i] + S[j]) % 256]
-
 def _rc4(text: bytes, key: bytes) -> bytearray:
     KEY_STREAM = _stream_key(key)
     out: bytearray = bytearray()
@@ -36,23 +37,20 @@ def _rc4(text: bytes, key: bytes) -> bytearray:
 
         out.append(text_chunk ^ key_chunk)
         
-    return out
-    
+    return out   
 
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
     plain_text_bytes = plain_text.encode()
-    key_bytes = key.encode()
+    key_hash = hash_key(key, KEY_SIZE_BITS)
     
-    encrypted_text = _rc4(plain_text_bytes, key_bytes)
+    encrypted_text = _rc4(plain_text_bytes, key_hash)
     
-    return (b64encode(encrypted_text).decode(), {})    
-    
-
+    return (b64encode(encrypted_text).decode(), {})        
 def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
     encrypted_text_bytes = b64decode(encrypted_text)
-    key_bytes = key.encode()
+    key_hash = hash_key(key, KEY_SIZE_BITS)
     
-    plain_text = _rc4(encrypted_text_bytes, key_bytes)
+    plain_text = _rc4(encrypted_text_bytes, key_hash)
     
     return  plain_text.decode()
     

@@ -10,7 +10,8 @@ json_data_t = dict[str, Any]
 class Encryption_Method(Protocol): 
     NAME: str
     DESC: str
-    DEFAULT_KEY: str
+    KEY_DEFAULT: str
+    KEY_SIZE_BITS: int
     CIPHER_TYPE: Literal["STREAM", "BLOCK", "CLASSIC"]
     
     @staticmethod

@@ -4,7 +4,7 @@ from typing import cast
 from sqlmodel import SQLModel, Session, create_engine, select
 from flask import Flask, g
 
-from ._models import User, Encrypted_Password
+from ._models_ import User, Encrypted_Password
 from password_wallet import ic
 from password_wallet.config import DATABASE_FILE, DEBUG, DEBUG_DB
 
@@ -35,6 +35,7 @@ def create_db():
 
 def init_app(app: Flask):
     app.cli.add_command(create_db)
+    
     ic(f"Zainicjowano moduł: {__name__}")
 
 ic(f"Załadowano moduł: {__name__}")
