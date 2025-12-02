@@ -1,11 +1,14 @@
 import os
 from typing import cast
 from sqlmodel import SQLModel, Session, create_engine, select
-from flask import Flask, g
+from flask import Flask, current_app, g
 
 from ._models_ import User, Encrypted_Password
 from password_wallet import ic
-from password_wallet.config import DATABASE_FILE, DEBUG, DEBUG_DB
+
+DEBUG = current_app.config["DEBUG"]
+DEBUG_DB = current_app.config["DEBUG_DB"]
+DATABASE_FILE = current_app.config["DATABASE_FILE"]
 
 engine = create_engine(DATABASE_FILE, echo=DEBUG and DEBUG_DB)
 

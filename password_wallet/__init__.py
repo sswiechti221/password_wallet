@@ -1,15 +1,14 @@
 from icecream import ic
 from flask import Flask
-from password_wallet.config import DEBUG
+from .config import Config, DebugConfig
 
 
-
-def create_app() -> Flask:
+def create_app(config: Config = DebugConfig) -> Flask:
     app = Flask(__name__)
-
-    ic(f"Uruchamianie aplikacji {__name__} w trybie {'DEBUG' if DEBUG else 'PRODUCTION'}")
     
-    app.config.from_pyfile("config.py")
+    ic(f"Uruchamianie aplikacji z konfiguracją: {config}")
+    
+    app.config.from_object(config)
 
     with app.app_context():
         from . import db
