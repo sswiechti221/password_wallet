@@ -1,5 +1,4 @@
-import click
-
+import os
 from typing import cast
 from sqlmodel import SQLModel, Session, create_engine, select
 from flask import Flask, g
@@ -29,12 +28,16 @@ def close_session():
     g.db_session.close()
     g.pop("db_session", None)    
 
-@click.command("create-db")
 def create_db():
     SQLModel.metadata.create_all(engine)
 
 def init_app(app: Flask):
-    app.cli.add_command(create_db)
+    
+    if not os.path.exists(DATABASE_FILE.removeprefix("sqlite:///")):
+        create_db()
+        ic(f"Baza danych nie istniała. Utworzono nową bazę danych: {DATABASE_FILE}")
+    else:
+        ic(f"Załadowano istniejącą bazę danych: {DATABASE_FILE}")
     
     ic(f"Zainicjowano moduł: {__name__}")
 

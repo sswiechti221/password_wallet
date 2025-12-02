@@ -1,6 +1,9 @@
+
+
+
 # Debug options
-DEBUG = True
-DEBUG_DB = True
+DEBUG = False
+DEBUG_DB = False
 
 # Database
 DATABASE_FILE = "sqlite:///password_wallet.db"

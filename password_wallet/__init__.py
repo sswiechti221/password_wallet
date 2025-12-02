@@ -7,8 +7,6 @@ from password_wallet.config import DEBUG
 def create_app() -> Flask:
     app = Flask(__name__)
 
-    if not DEBUG:
-            ic.disable()
     ic(f"Uruchamianie aplikacji {__name__} w trybie {'DEBUG' if DEBUG else 'PRODUCTION'}")
     
     app.config.from_pyfile("config.py")
