@@ -1,9 +1,9 @@
 from icecream import ic
 from flask import Flask
-from .config import Config, DebugConfig
+from .config import Config, ProdConfig
 
 
-def create_app(config: Config = DebugConfig) -> Flask:
+def create_app(config: Config = ProdConfig) -> Flask:
     app = Flask(__name__)
     
     ic(f"Uruchamianie aplikacji z konfiguracją: {config}")
