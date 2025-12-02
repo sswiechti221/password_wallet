@@ -35,7 +35,6 @@ def create_db():
     SQLModel.metadata.create_all(engine)
 
 def init_app(app: Flask):
-    
     if not os.path.exists(DATABASE_FILE.removeprefix("sqlite:///")):
         create_db()
         ic(f"Baza danych nie istniała. Utworzono nową bazę danych: {DATABASE_FILE}")

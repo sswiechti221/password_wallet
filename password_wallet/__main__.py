@@ -1,20 +1,25 @@
 import click
+
+from .config import Config, DebugConfig, ProdConfig
 from . import create_app
 
-@click.command()
-@click.option("--debug", is_flag=True, default=False, help="Uruchom aplikację w trybie debugowania.")
-def main(debug: bool):
-    config = None
-    if debug:
-        from password_wallet.config import DebugConfig
-        config = DebugConfig
-    else:
-        from password_wallet.config import ProdConfig
-        config = ProdConfig
+@click.group()
+def group():
+    "Password Wallet CLI"
 
-    app = create_app(config)
+@group.command("run")
+@click.option("--debug", is_flag=True, help="Uruchom aplikację w trybie debugowania.")
+def run(debug: bool):
+    "Uruchom aplikację Password Wallet."
+    config: Config
+    if debug:
+        config = DebugConfig
+    
+    else:
+        config = ProdConfig   
+    
+    app = create_app(config=config)
     app.run(debug=debug)
 
 if __name__ == "__main__":
-    main()
-    
+    group()
