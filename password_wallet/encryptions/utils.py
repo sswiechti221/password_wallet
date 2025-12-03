@@ -194,15 +194,14 @@ class BitSet:
         """ Roszerza BitSet o kolejny BitSet. Istnieje możliowść wybrania po któreji srtonie ma zostać umieszczony
 
         Args:
-            other (BitSet): _description_
-            side (Literal[&quot;Left&quot;, &quot;Right&quot;], optional): _description_. Defaults to "Right".
+            other (BitSet): BitSet do rozszerzenia
+            side (Literal[&quot;Left&quot;, &quot;Right&quot;], optional): Strona po której zostaną umieszczone bity. Defaults to "Right".
 
         Raises:
-            NotImplementedError: _description_
-            ValueError: _description_
+            ValueError: Kiedy podano niepoprawny argument side
 
         Returns:
-            BitSet: _description_
+            BitSet: Rozszerzony BitSet
         """
         new_value: int
         new_size: int
@@ -227,7 +226,7 @@ class BitSet:
             by (int): Jeżeli dodatnie obraca w lewą stronę. Natomiast gdy ujemne to w prawo
 
         Returns:
-            BitSet: _description_
+            BitSet: Obrócony BitSet
         """
         by %= self.size_bits
         out: int = 0
@@ -244,4 +243,13 @@ class BitSet:
         return BitSet(out, self.size_bits, self.bit_order)
     
 def hash_key(key: str, size: int) -> bytes:
+    """ Hasuje klucz do podanego rozmiaru
+
+    Args:
+        key (str): Klucz do zhashowania
+        size (int): Długość wyniku w bajtach
+
+    Returns:
+        bytes: Zhashowany klucz
+    """
     return blake2b(key.encode(), digest_size=size).digest()

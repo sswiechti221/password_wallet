@@ -9,10 +9,10 @@ from password_wallet.encryptions.utils import BitSet, hash_key
 
 NAME = "Salsa20"
 KEY_DEFAULT = "DOMYŚLNY_KLUCZ_SALSA20_HASZOWANY_SHA256"
-KEY_SIZE_BITS = 32
-DESC = """
-
-"""
+KEY_SIZE_BYTES = 32
+KEY_REGEX = r"^\w+$"
+KEY_FORMAT = f"Tekstowy ciąg znaków pasujący do regexu: {KEY_REGEX}, który zostanie zahashowany do klucza o długości {KEY_SIZE_BYTES} bajtów"
+DESC = """Nowoczesny, szybki i bezpieczny algorytm szyfrowania strumieniowego zaprojektowany przez Daniela Bernsteina. Generuje strumień pseudolosowych danych i łączy go z tekstem jawnym za pomocą XOR. Uważany za bardzo wydajny i bezpieczny, używany m.in. w kryptografii praktycznej (np. w systemach szyfrowania plików)."""
 CIPHER_TYPE = "STREAM"
 
 class Data_Size(IntEnum):
@@ -25,82 +25,6 @@ class Data_Size(IntEnum):
     BLOCK_WORDS = 16
     BLOCK_BYTS = BLOCK_WORDS * WORD_BYTS 
     BLOCK_BITS = BLOCK_BYTS * BYTE
-
-# class Bitmap():
-#     def __init__(self, value: int, size_byts: Bitmap_size | int) -> None:
-#         self.size_byts: int = size_byts.value if isinstance(size_byts, Bitmap_size) else size_byts
-#         self.size_bits: int = self.size_byts * Bitmap_size.BYTE.value
-#         self.value: int = self._normalize(value)
-        
-#     @classmethod
-#     def from_bytes(cls, bytes: bytes | bytearray, size_byts: Bitmap_size | int) -> Bitmap:
-#         if isinstance(size_byts, Bitmap_size):
-#             size_byts = size_byts.value
-    
-#         if len(bytes) > size_byts:
-#             raise ValueError(f"Nie można utworzyć Bitmapy z podanych bajtów. Długość podanych bajtów ({len(bytes)}) jest większa niż zadeklarowany rozmiar Bitmapy ({size_byts}).")
-        
-#         return cls(int.from_bytes(bytes), size_byts)
-    
-#     def to_bytes(self, trunk = False) -> bytes:
-#         """ Zwraca wartość Bitmapy w postaci bajtów
-
-#         Args:
-#             trunk (bool, optional): Jeżeli False obiekt bytes bedzie miał tą samą długość co Bitmap.
-#                                     Jeżeli True to obiekt bytes będzie miał minimalną długość potrzebną do przechowania wartości Bitmapy.
-#                                     Domyślnie True.
-
-#         Returns:
-#             bytes: Reprezentacja bajtowa Bitmapy
-#         """
-#         lenght: int
-#         if trunk:
-#             lenght = self._min_size_byts()
-#         else:
-#             lenght = self.size_byts
-        
-#         return self.value.to_bytes(length=lenght)        
-    
-#     @classmethod
-#     def from_base64(cls, bytes: bytes, size_byts) -> Bitmap:
-#         return cls.from_bytes(b64decode(bytes), size_byts=size_byts)
-    
-#     def to_base64(self, trunk = False) -> bytes:
-#         return b64encode(self.to_bytes(trunk=trunk))
-         
-#     def trunk(self) -> Self:
-#         self.size_byts = self._min_size_byts()
-#         self.size_bits = self.size_byts * Bitmap_size.BYTE.value
-        
-#         return self
-#     def _min_size_byts(self) -> int:
-#         bit_lenght = self.value.bit_length()
-#         if bit_lenght % Bitmap_size.BYTE.value == 0:
-#             lenght = bit_lenght // Bitmap_size.BYTE.value
-#         else:
-#             lenght = (self.value.bit_length() // Bitmap_size.BYTE.value) + 1
-#         return lenght
-    
-#     def _normalize(self, value: int) -> int:
-#         return value % (2 ** self.size_bits)
-    
-#     def __repr__(self) -> str:
-#         return f"<{__class__.__name__} size=[{self.size_bits} bits, {self.size_byts} byts] base64={self.to_base64(trunk=True)} bytes={self.to_bytes(trunk=True)} int={self.value}>"
-        
-#     def __add__(self, other: Bitmap) -> Bitmap:
-#         if self.size_byts != other.size_byts:
-#             raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
-        
-#         return Bitmap(self.value + other.value, self.size_byts)
-    
-#     def __xor__(self, other: Bitmap) -> Bitmap:
-#         if self.size_byts != other.size_byts:
-#             raise ValueError(f"Nie można dodać {self.__repr__()} do {other.__repr__()}. Z powodu róznych rozmiarów {self.size_byts == other.size_byts = }")
-        
-#         return Bitmap(self.value ^ other.value, self.size_byts)
-
-#     def __lshift__(self, by: int) -> Bitmap:
-#         return Bitmap(2**by * self.value % (2 ** self.size_bits -1), self.size_byts)
 
 word: partial[BitSet] = partial(BitSet, size=Data_Size.WORD_BITS.value)
 
@@ -238,14 +162,14 @@ def _salsa20(password_bytes: bytes, key_bytes: bytes, nonce: bytes) -> bytes:
     
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
     plain_text_bytes: bytes = plain_text.encode()
-    key_hash: bytes = hash_key(key, KEY_SIZE_BITS)
+    key_hash: bytes = hash_key(key, KEY_SIZE_BYTES)
     
     nonce: bytes = _get_nonce()
     
     return (b64encode(_salsa20(plain_text_bytes, key_hash, nonce)).decode(), {"nonce": b64encode(nonce).decode()})   
 def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
     encrypted_password_bytes: bytes = b64decode(encrypted_text)
-    key_hash: bytes = hash_key(key, KEY_SIZE_BITS)
+    key_hash: bytes = hash_key(key, KEY_SIZE_BYTES)
 
     nonce = b64decode(data["nonce"])
     

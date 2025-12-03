@@ -6,7 +6,7 @@ from password_wallet import db
 from password_wallet.config import DEFAULT_REDIRECT_URL
 from password_wallet.db import select, User, Encrypted_Password
 
-bp = Blueprint("home", __name__)
+bp = Blueprint("home", __name__, url_prefix="/home")
 
 @bp.before_request
 def db_and_user():
@@ -33,10 +33,6 @@ def db_and_user():
 def after_request(respond):
     db.close_session()   
     return respond
-    
-@bp.route("/blank")
-def __blank() -> str:
-    return render_template("base.html")
 
 @bp.route("/")
 def home():
@@ -49,8 +45,8 @@ def home():
 @bp.post('/store_password')
 def store_password():
     password = request.form.get('password', type=str)
-    encryption_method_name = request.form.get('encryption_method', default= None, type=str)
-    encryption_method_key = request.form.get('encryption_key', default= None, type=str)
+    encryption_method_name = request.form.get('encryption-method', default= None, type=str)
+    encryption_method_key = request.form.get('encryption-key', default= None, type=str)
     
     info_redirect = redirect(url_for("home.home"))
     
@@ -75,11 +71,11 @@ def store_password():
 
 @bp.post("/dump_password")
 def dump_password():
-    encrypted_password_id = request.form.get("encrypted_password_id")
+    encrypted_password_id = request.form.get("encrypted-password-id")
     user = cast(User, g.user)
     
     if not encrypted_password_id:
-        raise RuntimeWarning("Próba usunięcia hasła które nie istnieje")
+        return redirect(url_for("home.home"))
     
     encrypted_password_id = int(encrypted_password_id)
         

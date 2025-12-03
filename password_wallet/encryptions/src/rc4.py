@@ -5,10 +5,10 @@ from password_wallet.encryptions.utils import hash_key
 
 NAME = "RC4"
 KEY_DEFAULT = "DEFUALT"
-KEY_SIZE_BITS = 32
-DESC = """
-
-"""
+KEY_SIZE_BYTES = 32
+KEY_REGEX = r"^\w+$"
+KEY_FORMAT = f"Tekstowy ciąg znaków pasujący do regexu: {KEY_REGEX}, który zostanie zahashowany do klucza o długości {KEY_SIZE_BYTES} bajtów"
+DESC = """Symetryczny algorytm szyfrowania strumieniowego. Generuje pseudolosowy strumień bajtów, który miesza z danymi za pomocą operacji XOR. Był szeroko stosowany (np. w protokołach WEP i TLS), ale obecnie uważa się go za niebezpieczny z powodu licznych podatności."""
 CIPHER_TYPE = "STREAM"
 
 def _stream_key(key: bytes):
@@ -41,14 +41,14 @@ def _rc4(text: bytes, key: bytes) -> bytearray:
 
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
     plain_text_bytes = plain_text.encode()
-    key_hash = hash_key(key, KEY_SIZE_BITS)
+    key_hash = hash_key(key, KEY_SIZE_BYTES)
     
     encrypted_text = _rc4(plain_text_bytes, key_hash)
     
     return (b64encode(encrypted_text).decode(), {})        
 def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
     encrypted_text_bytes = b64decode(encrypted_text)
-    key_hash = hash_key(key, KEY_SIZE_BITS)
+    key_hash = hash_key(key, KEY_SIZE_BYTES)
     
     plain_text = _rc4(encrypted_text_bytes, key_hash)
     

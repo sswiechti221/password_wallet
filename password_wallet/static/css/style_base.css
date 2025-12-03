@@ -1,0 +1,172 @@
+:root {
+    font-size: medium;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+body {
+    font-family: Arial, Tahoma, sans-serif;
+    margin: 0;
+
+    width: 100%;
+    max-width: 100svw;
+    min-height: 100svh;
+
+    display: grid;
+    grid-template: "header header" 150px "nav main" 1fr "footer footer" 100px / 2fr 8fr;
+
+    color: white;
+}
+
+header, footer, main {
+    width: 100%;
+    padding: 1rem 0;
+}
+
+header {
+    grid-area: header;
+
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: start;
+    align-items: center;
+
+    gap: 0 2rem;
+
+    padding: 1rem 2rem;
+
+    background-color: black;
+
+    #logo {
+        flex: 0 1 auto;
+
+        min-width: auto;
+
+        width: 100%;
+        height: auto;
+
+        max-width: 7rem;
+        max-height: 7rem;
+
+        border-radius: 0.5rem;
+    }
+}
+
+nav {
+    grid-area: nav;
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 1rem;
+    
+    button, a {
+        width: 90%;
+        font-size: 2rem;
+    }
+}
+
+main {
+    grid-area: main;
+
+    width: 100%;
+    padding: 2rem;
+
+    color: black;
+    box-shadow: 1px 1px 10px black inset;
+
+    section > {
+        max-width: 90%;
+    }
+}
+
+footer {
+    grid-area: footer;
+
+    background-color: black;
+    padding: 10px;
+}
+
+button, a {
+    display: block;
+
+    padding: 10px;
+    text-align: center;
+
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: none;
+    
+    cursor: pointer;
+
+    color: white;
+    background-color: #5088ff;
+    border: 2px solid #94b3f7;
+    border-radius: 10px;
+
+    box-shadow: 5px 5px 4px #94b3f7;
+
+    transition: all 0.5s ease-in-out;
+    
+    &:hover {
+        box-shadow: none;
+    }
+}
+
+form {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+
+
+    > input, select {
+        position: relative;
+        width: 100%;
+        font-size: 1.5rem;
+        padding: 0.2rem;
+    }
+
+    > * {
+        display: block;
+    }
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    font-size: 1.5rem;
+}
+
+tr:nth-child(even) {
+    background-color: lightcyan;
+}
+
+tr:not(:has(th)):hover {
+    background-color: lightblue;
+}
+
+td, th {
+    padding: 5px 10px;
+    overflow: auto;
+}
+
+table, td, th {
+    border: 1px dashed lightblue;
+}

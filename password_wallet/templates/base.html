@@ -6,24 +6,29 @@
     {#- Dodatkowe linki -#}
     {% block links -%}{% endblock -%}
     {#- Podstawowe linki / Ładowane zawsze #}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_base.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
-    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static_css', filename='style_base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static_css', filename='style_extra.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static_img', filename='logo.png') }}" type="image/x-icon">
+    <script defer src="{{ url_for('static_js', filename='script.js') }}"></script>
     <title>Password wallet</title>
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="logo" id="logo">
+        <img src="{{ url_for('static_img', filename='logo.png') }}" alt="logo" id="logo">
         <h1>
             Password Wallet
         </h1>
-        {% if g.user -%}
-        <div id="user">
-            <p>Witaj {{ g.user.login }} !!</p>
-            <a href="{{ url_for('auth.signout') }}">Wyloguj</a>
-        </div>
-        {%- endif %}
     </header>
+    <nav>
+        <h2>Nawigacja</h2>
+        {% block nav%}
+            
+        {% endblock nav%}
+        {% if g.user %}
+            <h2>Witaj {{ g.user.login }}</h2>
+            <a href="{{ url_for('auth.signout') }}">Wyloguj</a>
+        {% endif %}
+    </nav>
     {% block main %}
     <main>
 
@@ -39,7 +44,7 @@
         {% endif %}
     {%- endwith %}
     <footer>
-        <p>Stonę wykonał: Seweryn Świech 5ti2</p>
+        <p>Stronę wykonał: Seweryn Świech 5ti2</p>
     </footer>
 </body>
 </html>

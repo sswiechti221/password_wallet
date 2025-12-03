@@ -14,6 +14,20 @@ __sorce_file__: str = "src"
 def avaible() -> list[str]:
     return list(__avaible_encryption_methods__.keys())
 
+def info(method_name: method_name_t) -> dict[str, str] | None:
+    encryption_method = __avaible_encryption_methods__.get(method_name, None)
+    
+    if encryption_method is None:
+        return None
+    
+    return {
+        "name": encryption_method.NAME,
+        "desc": encryption_method.DESC,
+        "cipher-type": encryption_method.CIPHER_TYPE,
+        "key-regex": encryption_method.KEY_REGEX,
+        "key-format": encryption_method.KEY_FORMAT,
+    }
+
 def get(method_name: method_name_t) -> Encryption_Method:
     encryption_method =  __avaible_encryption_methods__.get(method_name, None)
     

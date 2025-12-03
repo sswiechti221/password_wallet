@@ -1,0 +1,63 @@
+section.active {
+    display: block;
+}
+
+section.disabled {
+    display: none !important;
+}
+
+section#save-password-section {
+    display: flex;
+    gap: 1rem;
+
+    #form {
+        width: 40%;
+    }
+    #info {
+        width: 60%;
+    }
+}
+
+dl {
+    dt {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #5088ff;
+        
+    }
+
+    dd {
+        font-size: 1rem;
+    }
+}
+
+p.info-p {
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    color: black;
+    background-color: orange;
+    box-shadow: 2px 2px 4px rgb(238, 207, 149);
+    border-radius: 10px;
+
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: bold;
+}
+
+p.error-p {
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    color: black;
+    background-color: red;
+    box-shadow: 2px 2px 4px rgb(255, 147, 147);
+
+    border-radius: 10px;
+
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: bold;
+}

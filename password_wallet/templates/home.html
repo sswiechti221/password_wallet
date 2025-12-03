@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
-{% block links %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_extra.css') }}">
-{% endblock %}
+{% block links%}
+    <script defer src="{{ url_for('static_js', filename='home.js') }}"></script>
+{% endblock%}
+{% block nav%}
+    <button id="stored-passwords-button">Zapisane hasła</button>
+    <button id="save-password-button">Zapisz hasło</button>
+    {{ super() }}
+{% endblock nav%}
 {% block main -%}
 <main>
-    <section id="buttons-section">      
-        <button id="stored_password_button" onclick="section_change_to('stored-passwords-section', 'section-namespace-1');">Zapisane hasła</button>
-        <button id="save_password_button" onclick="section_change_to('save-password-section', 'section-namespace-1');">Zapisz hasło</button>
-    </section>
-    <section id="stored-passwords-section" class="active section-namespace-1">
+    <section id="stored-passwords-section" namespace="section-namespace-1" class="active">
         <h2>Zapisane Hasła</h2>
         {%- if stored_passwords %}
         <table>
@@ -26,8 +27,8 @@
                 <td>{{ encrypted_password.encryption_method_name }}</td>
                 <td>{{ encrypted_password.encryption_method_key }}</td>
                 <td>
-                    <form action="{{ url_for("home.dump_password") }}" method="post">
-                        <input name="encrypted_password_id" type="hidden" value="{{ encrypted_password.id }}">
+                    <form action="{{ url_for('home.dump_password') }}" method="post">
+                        <input name="encrypted-password-id" type="hidden" value="{{ encrypted_password.id }}">
                         <button type="submit">Usuń</button>
                     </form>
                 </td>
@@ -38,19 +39,40 @@
             <p>Brak zapisanych haseł</p>
         {% endif %}
     </section>
-    <section id="save-password-section" class="disabled section-namespace-1">
-        <h2>Dodaj hasło</h2>
-        <form action="{{ url_for('home.store_password') }}" method="post">
-            <input type="text" name="password" placeholder="Hasło do zapisania" pattern="[A-z1-9]+">
-            <select name="encryption_method">
-                {% for encryption_name in avaible_encryptions -%}
-                    <option value="{{ encryption_name }}">{{ encryption_name }}</option>
-                {%- endfor %}
-            </select>
-            <input type="text" name="encryption_key" placeholder="Klucz szyfrowania" pattern="[A-z1-9]+">
-            <button type="submit">Zapisz</button>
-        </form>
+    <section id="save-password-section" namespace="section-namespace-1" class="disabled">
+        <div id="form">
+            <h2>Dodaj hasło</h2>
+            <form action="{{ url_for('home.store_password') }}" method="post">
+                <label for="password-input">Hasło do zapisania</label>
+                <input id="password-input" type="text" name="password" placeholder="Hasło: " pattern="[A-z1-9]+" required>
+                <label for="encryption-metchod-input">Netida szyfrowania</label>
+                <select id="encryption-metchod-input" name="encryption-method">
+                    {% for encryption_name in avaible_encryptions -%}
+                        <option value="{{ encryption_name }}">{{ encryption_name }}</option>
+                    {%- endfor %}
+                </select>
+                <label for="encryption-key-input">Klucz</label>
+                <input id="encryption-key-input" type="text" name="encryption-key" placeholder="Klucz: " pattern="[A-z1-9]+" required>
+                <button type="submit">Zapisz</button>
+            </form>
+        </div>
+        <div id="info">
+            <h2>Informacje o szyfrowaniu</h2>
+            <section id="encryption-info-section">
+                <dl>
+                    <dt>Nazwa: </dt>
+                    <dd field="name"></dd>
+                    <dt>Format klucza: </dt>
+                    <dd field="key-format"></dd>
+                    <dt>Opis: </dt>
+                    <dd field="desc"></dd>
+                    <dt>Rodzaj: </dt>
+                    <dd field="cipher-type"></dd>
+                </dl>
+            </section>
+        </div>
     </section>
+    
     {% with messages = get_flashed_messages(category_filter=['info']) %}
         {% if messages%}
             <section id="info-section">

@@ -3,12 +3,10 @@ from base64 import b64encode, b64decode
 
 NAME = "Caesar"
 KEY_DEFAULT = "5"
-KEY_SIZE_BITS = 8
-DESC = """
-    Zmodyfikowana wersja syfru cezara.
-    
-    Zasada działanie jest taka sama z tą rużnicą że zamiast ogranicać się do danego alfabetu. Operujemy na wartościach bajtów.
-"""
+KEY_SIZE_BYTES = 1 # Nie istnieje fizyczny klucz, ale dla spójności z innymi szyframi definiujemy rozmiar 1 bajt
+KEY_REGEX = r"^\d+$"
+KEY_FORMAT = "Liczba całkowita reprezentująca przesunięcie liter w alfabecie (np. 3)"
+DESC = """Jeden z najprostszych szyfrów podstawieniowych. Każda litera tekstu jawnego jest przesuwana o stałą liczbę pozycji w alfabecie (np. o 3). Bardzo łatwy do złamania – traktowany jako technika historyczna lub edukacyjna."""
 CIPHER_TYPE = "CLASSIC"
 
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:

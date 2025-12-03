@@ -4,8 +4,10 @@ from typing import Any
 
 NAME = "Data Encryption Standard"
 KEY_DEFAULT = "Domyslny klucz"
-KEY_SIZE_BITS = 8
-DESC = """"""
+KEY_SIZE_BYTES = 8
+KEY_REGEX = r"^\w+$"
+KEY_FORMAT = f"Tekstowy ciąg znaków pasujący do regexu: {KEY_REGEX}, który zostanie zahashowany do klucza o długości {KEY_SIZE_BYTES} bajtów"
+DESC = """Symetryczny algorytm szyfrowania blokowego opracowany w latach 70. Przetwarza dane w blokach 64-bitowych, używając 56-bitowego klucza. Uznawany dziś za niebezpieczny, ponieważ jego klucz jest zbyt krótki i łatwy do złamania współczesnymi metodami."""
 CIPHER_TYPE = "BLOCK"
 
 
@@ -204,12 +206,12 @@ def _des(text: bytes, key: bytes, decrypt: bool = False) -> bytes:
         
 def encrypt(plain_text: str, key: str) -> tuple[str, dict[str, Any]]:
     plain_text_bytes = plain_text.encode()
-    key_hash = hash_key(key, KEY_SIZE_BITS)    
+    key_hash = hash_key(key, KEY_SIZE_BYTES)    
 
     return (b64encode(_des(plain_text_bytes, key_hash)).decode(), {})
 def decrypt(encrypted_text: str, key: str, data: dict[str, Any]) -> str:
     encrypted_text_bytes = b64decode(encrypted_text)
-    key_hash = hash_key(key, KEY_SIZE_BITS)   
+    key_hash = hash_key(key, KEY_SIZE_BYTES)   
     
     return _des(encrypted_text_bytes, key_hash, True).decode().strip("\x00")
         

@@ -11,7 +11,9 @@ class Encryption_Method(Protocol):
     NAME: str
     DESC: str
     KEY_DEFAULT: str
-    KEY_SIZE_BITS: int
+    KEY_SIZE_BYTES: int
+    KEY_REGEX: str
+    KEY_FORMAT: str
     CIPHER_TYPE: Literal["STREAM", "BLOCK", "CLASSIC"]
     
     @staticmethod
