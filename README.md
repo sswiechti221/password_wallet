@@ -4,6 +4,7 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/sswiechti221/password_wallet/python-package.yml?style=flat-square)
 
 ## Jak uruchomić ?
-1. Przechodzimy do folderu gdze znajduję się pobrane archiwóm
-2. Wykonujemy komende python -m password_wallet
-3. I zrobione
+1. Przechodzimy do folderu gdze znajduję się pobrane archiwum
+2. Wykonujemy komendę pip install .
+3. Wykonujemy komendę python -m password_wallet
+4. I zrobione
