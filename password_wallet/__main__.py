@@ -1,8 +1,5 @@
 import sys
-
-from .config import Config, DebugConfig, ProdConfig
 from . import create_app
-
 
 if __name__ == "__main__":
     debug: bool = False

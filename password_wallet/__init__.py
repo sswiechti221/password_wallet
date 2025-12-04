@@ -2,7 +2,6 @@ from icecream import ic
 from flask import Flask, redirect
 from .config import Config, ProdConfig, DebugConfig
 
-
 def create_app(*_, debug: bool) -> Flask:
     app = Flask(__name__)
     

@@ -2,18 +2,6 @@
 requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["password_wallet.*"]
-exclude = ["test", "test*", "*test*", "tests", "tests*", "*tests*"]
-namespaces = false
-
-[tool.setuptools.package-data]
-exclude = ["test", "test*", "*test*", "tests", "tests*", "*tests*"]
-
 [project]
 name = "password_wallet"
 version = "0.1.0"
